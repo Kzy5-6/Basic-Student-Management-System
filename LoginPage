@@ -1,0 +1,287 @@
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+public class App {
+    public static void main(String[] args) {
+        ArrayList<User>list = new ArrayList<>();
+        while (true) {
+            System.out.println("Welcome to the Student Management System,What do you want to do?");
+            System.out.println("1.Log in");
+            System.out.println("2.Sign up");
+            System.out.println("3.Forget Password");
+            System.out.println("4.Over");
+            Scanner sc = new Scanner(System.in);
+            String choose =sc.next();
+            switch(choose){
+                case "1" -> logIn(list);
+
+
+                case "2" -> signUp(list);
+                case "3" -> forgetPassword(list);
+                case "4" -> {
+                    System.out.println("Thanks for using.");
+                    System.exit(0);}
+                default -> System.out.println("Your input is wrong");
+            }
+        }
+
+    }
+
+    private static void forgetPassword(ArrayList<User>list) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter the username");
+        String username = sc.next();
+        boolean flag = contains(list,username);
+        if(!flag){
+            System.out.println("You have not registered yet,please sign up first");
+            return;
+        }
+        System.out.println("Please enter your id");
+        String id = sc.next();
+        System.out.println("Please enter your phone number");
+        String phoneNumber = sc.next();
+        int index = findIndex(list,username);
+        User user = list.get(index);
+        if(!(user.getPersonId().equals(id) && user.getPhoneNumber().equals(phoneNumber))){
+            System.out.println("Id number or phone number is wrong");
+            return;
+        }
+        String newpassword;
+        while (true) {
+            System.out.println("Please enter the new password");
+            newpassword = sc.next();
+            System.out.println("Please enter the new password again");
+            String renewpassword = sc.next();
+            if(!(newpassword.equals(renewpassword)))
+            {
+                System.out.println("Two password inputs are inconsistent,please try again");
+                continue;
+            }
+            break;
+        }
+        user.setPassword(newpassword);
+        System.out.println("Password changed successfully");
+
+    }
+
+    private static int findIndex(ArrayList<User> list, String username) {
+        for (int i = 0; i < list.size(); i++) {
+            User user = list.get(i);
+            if(user.getUserName().equals(username))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void signUp(ArrayList<User>list) {
+        String username;
+        String password;
+        String personId;
+        String phoneNumber;
+        Scanner sc = new Scanner(System.in);
+
+        //username
+        while (true) {
+            System.out.println("Please enter your name,length between 3-15,which can only be a combination of letters and numbers,not pure numbers");
+            username = sc.next();
+            //if username is right
+            boolean flag1 = checkUsename(username);
+            if(!flag1){
+                System.out.println("The username format doesn't meet the requirement,please enter again");
+                continue;
+            }
+            //if username already exists
+            boolean flag2 = contains(list,username);
+            if(flag2){
+                System.out.println("This username already exists,please try agagin");
+            }
+            else{
+                break;
+            }
+
+        }
+        //password
+        while (true) {
+            System.out.println("Please enter the password");
+            password = sc.next();
+            System.out.println("Please enter the password again");
+            String passwordAgain = sc.next();
+            if(!passwordAgain.equals(password)){
+                System.out.println("Two input passwords are inconsistent,please try again");
+                continue;
+            }else{
+                break;
+            }
+        }
+        //id
+        while(true){
+            System.out.println("Please enter your id number");
+            personId = sc.next();
+            boolean flag =checkPersonId(personId);
+            if(!flag){
+                System.out.println("Format Error,please try again");
+                continue;
+            }
+            else break;
+        }
+        //phone number
+        while(true){
+            System.out.println("Please enter your phone number");
+            phoneNumber = sc.next();
+            boolean flag = checkPhonenumber(phoneNumber);
+            if(!flag){
+                System.out.println("Format Error,please try again");
+                continue;
+            }
+            else break;
+        }
+
+        User user = new User(username,password,personId,phoneNumber);
+        list.add(user);
+        System.out.println("Sign up successfully" );
+    }
+
+    private static boolean checkPhonenumber(String phoneNumber) {
+        if(phoneNumber.length()!=11){
+            return false;
+        }
+        if(phoneNumber.startsWith("0")){
+            return false;
+        }
+        for (int i = 0; i < phoneNumber.length(); i++) {
+            char c = phoneNumber.charAt(i);
+            if(!(c>='0' && c<='9'))
+                return false;
+        }
+        return true;
+    }
+
+    private static boolean checkPersonId(String personId) {
+        if(personId.length()!=18){
+            return false; 
+        }
+        boolean flag=personId.startsWith("0");
+        if (flag) {
+            return false;
+        }
+        for (int i = 0; i < personId.length()-1; i++) {
+            char c = personId.charAt(i);
+            if(!(c >='0' && c <='9')){
+                return false;
+            }
+        }
+        char endChar = personId.charAt(personId.length()-1);
+        if((endChar>='0' && endChar<='9') || (endChar == 'x' )||(endChar == 'X')){
+            return true;
+        }
+            return false;
+    }
+
+    public static boolean contains(ArrayList<User>list,String username){
+        for (int i = 0; i < list.size(); i++) {
+            User user = list.get(i);
+            String rightUsername = user.getUserName();
+            if(rightUsername.equals(username)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private static boolean checkUsename(String username) {
+        int len = username.length();
+        int count = 0;
+        if(len<3 || len>15)  return false;
+        for (int i = 0; i < username.length(); i++) {
+            char c = username.charAt(i);
+            if(!((c>='a'&& c<='z') ||(c>='A' && c<='Z')||(c>='0'&& c<='9'))){
+                return false;
+            }
+            if((c>='a'&& c<='z') ||(c>='A' && c<='Z')){
+               count++;
+               break;
+            }
+        }
+        return count>0;
+    }
+
+    private static void logIn(ArrayList<User>list) {
+      Scanner sc = new Scanner(System.in);
+        for (int i = 0; i < 3; i++) {
+            System.out.println("Please enter your user name");
+            String username = sc.next();
+            String password;
+            if(!contains(list,username)){
+                System.out.println("You have not registered yet,please sign up first");
+                return;
+            }
+            System.out.println("Please enter your password");
+            password = sc.next();
+            while (true) {
+                System.out.println("Please enter the coded");
+                String rightcode = getCode();
+                System.out.println(rightcode);
+                String code = sc.next();
+                if(!code.equalsIgnoreCase(rightcode))
+                {
+                    System.out.println("The code is wrong");
+                    continue;
+                }
+                break;
+
+            }
+            User userInfo = new User(username,password,null,null);
+            boolean result = checkUserInfo(list,userInfo);
+            if(result){
+                System.out.println("Login succeeded");
+            }
+            else{
+                System.out.println("Login failed,username or password incorrect");
+                if(i==2){
+                    System.out.println("The current account is blocked");
+                    return;
+                }
+                else{
+                    System.out.println("There are"+ (2-i)+"chances");
+                }
+            }
+
+        }
+
+
+    }
+    public static boolean checkUserInfo(ArrayList<User>list,User userInfo){
+        for (int i = 0; i < list.size(); i++) {
+            User user = list.get(i);
+            if(user.getUserName().equals(userInfo.getUserName()) && user.getPassword().equals(userInfo.getPassword())){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static String getCode(){
+        ArrayList<Character>list = new ArrayList<>();
+        for (int i = 0; i < 26; i++) {
+            list.add((char)('a'+i));
+            list.add((char)('A'+i));
+        }
+        StringBuilder sb = new StringBuilder();
+        Random random =new Random();
+        for (int i = 0; i < 4; i++) {
+            int index = random.nextInt(list.size());
+            char c = list.get(index);
+            sb.append(c);
+        }
+        int number = random.nextInt(10);
+        sb.append(number);
+        char[] arr = sb.toString().toCharArray();
+        int randomIndex = random.nextInt(arr.length);
+        char temp = arr[randomIndex];
+        arr[randomIndex] = arr[arr.length-1];
+        arr[arr.length-1] = temp;
+        return new String(arr);
+    }
+}
