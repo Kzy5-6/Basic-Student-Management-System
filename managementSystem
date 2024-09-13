@@ -1,0 +1,129 @@
+import java.awt.desktop.SystemEventListener;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class Test
+{
+
+    public static void main(String[] args) {
+        ArrayList<Student>list = new ArrayList<>();
+       loop: while(true){
+        System.out.println("Welcome to the Student Management System,What do you want to do?");
+        System.out.println("1.add student");
+        System.out.println("2.delete student");
+        System.out.println("3.update student");
+        System.out.println("4.query student");
+        System.out.println("5.over");
+
+        Scanner sc = new Scanner(System.in);
+        String choose = sc.next();
+        switch (choose) {
+            case "1" -> addStudent(list);
+            case "2" -> deleteStudent(list);
+            case "3" -> updateStudent(list);
+            case "4" -> queryStudent(list);
+            case "5" -> {
+                System.out.println("over");
+                break loop;}
+            default -> System.out.println("Your input is wrong");
+        }
+
+        }
+    }
+
+    //add student
+    public static void addStudent(ArrayList<Student>list){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter the student's id:" );
+        String id = sc.next();
+
+        if(contains(list,id)){
+            System.out.println("This  student already exists.");}
+        else{
+            System.out.println("Please enter the student's name:" );
+            String name = sc.next();
+            System.out.println("Please enter the student's age:" );
+            int age = sc.nextInt();
+            System.out.println("Please enter the student's address:" );
+            String address = sc.next();
+            Student s = new Student(id,name,age,address);
+            list.add(s);
+            System.out.println("Successfully added.");
+        }
+    }
+    //delete student
+    public static void deleteStudent(ArrayList<Student>list){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter the student's id you want to delete:");
+        String id = sc.next();
+        int index = getIndex(list,id);
+        if(index >= 0){
+            list.remove(index);
+            System.out.println("Successfully deleted!");
+        }
+        else{
+            System.out.println("This student doesn't exist.");
+        }
+
+    }
+    public static int getIndex(ArrayList<Student>list,String id)
+    {
+        for (int i = 0; i < list.size(); i++) {
+            Student stu = list.get(i);
+            String sid = stu.getId();
+            if(sid.equals(id)){
+                return i ;
+            }
+        }
+        return -1;
+    }
+    //
+    public static void updateStudent(ArrayList<Student>list){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter the student's id you want to update:");
+        String id = sc.next();
+
+        int index = getIndex(list,id);
+        if(index == -1){
+            System.out.println("This student doesn't exist.");
+            return;
+        }
+        Student stu = list.get(index);
+        System.out.println("Please enter the new name");
+        String newName = sc.next();
+        stu.setName(newName);
+        System.out.println("Please enter the new address");
+        String newAddress = sc.next();
+        stu.setAddress(newAddress);
+        System.out.println("Please enter the new age");
+        int newAge = sc.nextInt();
+        stu.setAge(newAge);
+
+        System.out.println("Successfully updated!");
+    }
+    public static void queryStudent(ArrayList<Student>list){
+        if(list.size()==0){
+            System.out.println("No Student Information Exists");
+            return;
+        }
+        System.out.println("id\t\tname\tage\taddress");
+        for (int i = 0; i < list.size(); i++) {
+            Student stu = list.get(i);
+            System.out.println(stu.getId()+"\t"+stu.getName()+"\t"+stu.getAge()+"\t"+stu.getAddress());
+        }
+    }
+
+    public static boolean contains(ArrayList<Student>list,String id){
+        /*for (int i = 0; i < list.size(); i++) {
+            Student stu = list.get(i);
+            String sid = stu.getId();
+            if(sid.equals(id)){
+                return true;
+            }
+        }
+        return false;*/
+        return getIndex(list,id)>=0;
+    }
+
+}
